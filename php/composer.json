@@ -1,0 +1,7 @@
+{
+    "require": {
+        "bref/bref": "^0.5.27",
+        "aws/aws-sdk-php": "^3.143",
+        "guzzlehttp/guzzle": "^6.5"
+    }
+}

@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: Alex Fernandes lambdas with php.
+Parameters:
+    ddApiKey:
+        Description: 'Datadog API Key'
+        Type: 'String'
+Resources:
+  apigateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: lambda-php
+      StageName: demo
+      TracingEnabled: true
+      EndpointConfiguration: EDGE
+      Auth:
+        ApiKeyRequired: false
+      Domain:
+        DomainName: php.aws.pipsquack.ca
+        CertificateArn: arn:aws:acm:us-west-1:601427279990:certificate/2bf708da-ab6f-4645-aafa-08ac928a0fab
+        BasePath:
+          - demo
+        Route53:
+          HostedZoneName: aws.pipsquack.ca.
+  entrypoint:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: alexf-php-entrypoint
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.7
+      CodeUri: entrypoint/
+      MemorySize: 128
+      Timeout: 30
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref apigateway
+            Path: /entrypoint
+            Method: GET
+      Environment:
+        Variables:
+          DD_API_KEY: !Ref ddApiKey
+      Tags:
+        creator: alex.fernandes
+      Tracing: Active
+      Layers:
+        - 'arn:aws:lambda:us-west-1:464622532012:layer:Datadog-Python37:18'
+  php:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: alexf-php
+      Handler: index.php
+      Runtime: provided
+      CodeUri: php/
+      MemorySize: 128
+      Timeout: 10
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            RestApiId: !Ref apigateway
+            Path: /php
+            Method: GET
+      Tags:
+        creator: alex.fernandes
+      Tracing: Active
+      Layers:
+        - 'arn:aws:lambda:us-west-1:209497400698:layer:php-73:26'
