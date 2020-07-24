@@ -22,6 +22,9 @@ Resources:
           - demo
         Route53:
           HostedZoneName: aws.pipsquack.ca.
+      Tags:
+        creator: alex.fernandes
+        env: lab
   entrypoint:
     Type: 'AWS::Serverless::Function'
     Properties:
@@ -43,6 +46,7 @@ Resources:
           DD_API_KEY: !Ref ddApiKey
       Tags:
         creator: alex.fernandes
+        env: lab
       Tracing: Active
       Layers:
         - 'arn:aws:lambda:us-west-1:464622532012:layer:Datadog-Python37:18'
@@ -64,6 +68,7 @@ Resources:
             Method: GET
       Tags:
         creator: alex.fernandes
+        env: lab
       Tracing: Active
       Layers:
         - 'arn:aws:lambda:us-west-1:209497400698:layer:php-73:26'
